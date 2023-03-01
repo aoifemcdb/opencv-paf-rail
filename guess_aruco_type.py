@@ -1,7 +1,7 @@
 import argparse
 import imutils
 import cv2
-from aruco_dict import ARUCO_DICT
+from Archive.aruco_dict import ARUCO_DICT
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required=True,

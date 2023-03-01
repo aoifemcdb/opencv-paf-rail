@@ -2,7 +2,7 @@ import numpy as np
 import argparse
 import cv2
 import sys
-from aruco_dict import ARUCO_DICT
+from Archive.aruco_dict import ARUCO_DICT
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()

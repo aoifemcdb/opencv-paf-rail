@@ -26,8 +26,6 @@ plt.show()
 # find contours of white area
 contours, hierarchy = cv2. findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-
-
 # filter out shadows etc
 # areas = [cv2.contourArea(c) for c in contours]
 # # max_index = np.argmax(areas)
@@ -36,35 +34,42 @@ contours, hierarchy = cv2. findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_S
 #contour areas
 h_list = []
 w_list = []
+x_list = []
+y_list = []
 
 for c in contours:
     x, y, w, h = cv2.boundingRect(c)
+    x_list.append(x)
+    y_list.append(y)
     if w >= 50 and h >= 40:
         cv2.rectangle(image, (x,y), (x+w, y+h), (255,0,0), 15)
         h_list.append(h)
         w_list.append(w)
         pass
 
+x = np.array(x_list)
+y = np.array(y_list)
+x_y = np.vstack((x,y))
+x_y = x_y.T
+# print(x_y)
+# ind = np.unravel_index(np.argmin(x_y, axis=None), x_y.shape)
+# print(x_y[ind])
+min = np.min(x_y)
+print(min)
 
 h = np.array(h_list)
 w = np.array(w_list)
 h_w = np.vstack((h,w))
 h_w = h_w.T
-print(h_w)
-
-
-# x, y, w, h = cv2.boundingRect(contours)
-# # draw rectangle around image
-# cv2.rectangle(image, (x,y), (x+w, y+h), (255, 0, 0),10)
-# contoured = cv2.drawContours(image, contours, -1, (255,0,0),10)
+# print(h_w)
 
 plt.figure()
 plt.imshow(image)
 plt.show()
 
 # FROM SOLIDWORKS
-CALIBRATION_MATRIX = (0.023, 0.023)
-# h_mm, w_mm = np.multiply(CALIBRATION_MATRIX, (h,w))
+CALIBRATION_MATRIX = 0.023
+h_w_mm = np.multiply(CALIBRATION_MATRIX, h_w)
 
-# print("Distances (pixel): vertical: %d, horizontal %d" % (h,w))
-# print("Distances (mm): vertical: %d mm, horizontal %d mm" % (h_mm,w_mm))
+cv2.imwrite('./output_images/contoured_image_samples.jpg', image)
+print("Image saved")

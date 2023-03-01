@@ -1,13 +1,10 @@
 # import the necessary packages
 from imutils.video import VideoStream
 import argparse
-import imutils
 import time
 import cv2
 import sys
-from video_threading.thread_demo import threadVideoGet
-from aruco_dict import ARUCO_DICT
-from video_threading.VideoGet import VideoGet
+from Archive.aruco_dict import ARUCO_DICT
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
