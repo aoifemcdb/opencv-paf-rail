@@ -6,14 +6,16 @@ import numpy as np
 import argparse
 import imutils
 import cv2
-import matplotlib.pyplot as plt
+from thresholding import threshold_red
+
 
 def midpoint(pt_a, pt_b):
 	return ((pt_a[0] + pt_b[0]) * 0.5, (pt_a[1] + pt_b[1]) * 0.5)
 
 
-image = cv2.imread('./test_images/contoured_image_samples.jpg')
-image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+# image = cv2.imread('./output_images/thresholded_print_samples.jpg')
+thresholded_image = threshold_red()
+image = cv2.cvtColor(thresholded_image, cv2.COLOR_BGR2GRAY)
 
 
 #find contours in edge map (not necessary?)
@@ -89,7 +91,7 @@ for c in cnts:
 			cv2.FONT_HERSHEY_SIMPLEX, 0.55, color,5)
 		# show the output image
 		# cv2.imshow("Image", orig)
-		cv2.imwrite('./output_images/distance_between.jpg', orig)
+		cv2.imwrite('./output_images/distance_between_test.jpg', orig)
 
 		# cv2.waitKey(0)
 		# plt.figure()
