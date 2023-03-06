@@ -18,7 +18,7 @@ def midpoint(pt_a, pt_b):
 	return ((pt_a[0] + pt_b[0]) * 0.5, (pt_a[1] + pt_b[1]) * 0.5)
 
 
-thresholded_image = threshold_red('./input_images/print_samples.jpg')
+thresholded_image = threshold_red('./input_images/print_samples_random.jpg')
 
 image = cv2.cvtColor(thresholded_image, cv2.COLOR_BGR2GRAY)
 
@@ -115,17 +115,21 @@ objects_coords_arr = CALIBRATION_MATRIX*objects_coords_arr
 
 objects_coords_arr[:,:,0] = objects_coords_arr[:,:,0] - ref_coords[4,0]
 objects_coords_arr[:,:,1] = objects_coords_arr[:,:,1] - ref_coords[4,1]
-print(objects_coords_arr)
+#make sure all co-ords are positive
+objects_coords_arr = np.absolute(objects_coords_arr)
+
+
 ### NORMALIZE TO MAKE REF OBJECT THE STARTING POINT ###
 ref_coords[:,0] = ref_coords[:,0] - ref_coords[4,0]
 ref_coords[:,1] = ref_coords[:,1] - ref_coords[4,1]
-print(ref_coords)
+#make sure all co-ords are positive
+ref_coords = np.absolute(ref_coords)
 
 ref_centre = ref_coords[4,:]
 obj_centre = objects_coords_arr[:,4,:]
 
 
-line_arr = np.vstack((ref_centre, obj_centre[0], obj_centre[1]))
+line_arr = np.vstack((ref_centre, obj_centre[0], obj_centre[1], obj_centre[2], obj_centre[3], obj_centre[4]))
 
 
 line_el_1 = line_arr[0]
@@ -140,6 +144,18 @@ line_el_3 = line_arr[2]
 line_el_3_x = line_el_3[0]
 line_el_3_y = line_el_3[1]
 
+line_el_4 = line_arr[3]
+line_el_4_x = line_el_4[0]
+line_el_4_y = line_el_4[1]
+
+line_el_5 = line_arr[4]
+line_el_5_x = line_el_5[0]
+line_el_5_y = line_el_5[1]
+
+line_el_6= line_arr[5]
+line_el_6_x = line_el_6[0]
+line_el_6_y = line_el_6[1]
+
 #NORMALIZE TO MAKE REF OBJ THE STARTING POINT
 line_el_1_x_norm = line_el_1_x - line_el_1_x
 line_el_1_y_norm = line_el_1_y - line_el_1_x
@@ -150,11 +166,11 @@ line_el_2_y_norm = line_el_2_y - line_el_1_x
 line_el_3_x_norm = line_el_3_x - line_el_1_x
 line_el_3_y_norm = line_el_3_y - line_el_1_x
 
-x = [line_el_1_x, line_el_2_x, line_el_3_x]
-y = [line_el_1_y, line_el_2_y, line_el_3_y]
+x = [line_el_1_x, line_el_2_x, line_el_3_x, line_el_4_x, line_el_5_x, line_el_6_x]
+y = [abs(line_el_1_y), abs(line_el_2_y), abs(line_el_3_y), abs(line_el_4_y), abs(line_el_5_y), abs(line_el_6_y)]
 
 #plot
-plt.figure(figsize=(10,4))
+plt.figure(figsize=(12,4))
 plt.scatter(ref_coords[:,0], ref_coords[:,1])
 plt.plot(x,y, '--')
 plt.scatter(objects_coords_arr[:,:,0], objects_coords_arr[:,:,1], marker='v')
@@ -163,7 +179,7 @@ for x,y in zip(x,y):
 	label = f"({x:.1f},{y:.1f})"
 	plt.annotate(label, (x,y), textcoords = "offset points", xytext = (0,10), ha = 'center')
 
-plt.xlim([-300, 600])
+plt.xlim([-300, 1000])
 plt.xlabel('mm')
 plt.ylabel('mm')
 ax=plt.gca()

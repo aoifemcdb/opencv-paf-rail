@@ -38,14 +38,14 @@ def threshold_red(image):
     # visualise_thresholding(img, hsv_img, red_mask, result)
     return result
 
-def save_thresholded_image(savename: str):
-    result = threshold_red()
+def save_thresholded_image(image, savename: str):
+    result = threshold_red(image)
     cv2.imwrite('./output_images/' + '{}'.format(savename), result)
     print("Image saved")
     return
 
-threshold_red('./input_images/print_samples.jpg')
-# save_thresholded_image('thresholded_print_samples.jpg')
+# threshold_red('./input_images/print_samples_long.jpg')
+save_thresholded_image('./input_images/print_samples_random.jpg','thresholded_print_samples_random.jpg')
 
 
 
