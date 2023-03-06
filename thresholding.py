@@ -27,14 +27,15 @@ def visualise_thresholding(img, hsv_img, full_mask, result):
     plt.imshow(result)
     plt.show()
 
-def threshold_red():
+def threshold_red(image):
     lower1 = (0, 100, 20)
     upper1 = (10, 255, 255)
     lower2 = (160, 100, 20)
     upper2 = (179, 255, 255)
-    img, hsv_img = load_hsv_image('./test_images/print_samples.jpg')
+    img, hsv_img = load_hsv_image(image)
+    # img, hsv_img = load_hsv_image('./test_images/print_samples.jpg')
     red_mask, result = generate_mask(hsv_img, lower1, upper1, lower2, upper2)
-    visualise_thresholding(img, hsv_img, red_mask, result)
+    # visualise_thresholding(img, hsv_img, red_mask, result)
     return result
 
 def save_thresholded_image(savename: str):
@@ -43,7 +44,8 @@ def save_thresholded_image(savename: str):
     print("Image saved")
     return
 
-save_thresholded_image('thresholded_print_samples.jpg')
+threshold_red('./input_images/print_samples.jpg')
+# save_thresholded_image('thresholded_print_samples.jpg')
 
 
 

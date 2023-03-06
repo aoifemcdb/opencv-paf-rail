@@ -3,32 +3,37 @@ from scipy.spatial import distance as dist
 from imutils import perspective
 from imutils import contours
 import numpy as np
-import argparse
 import imutils
 import cv2
 from thresholding import threshold_red
+import matplotlib.pyplot as plt
+
+ref_obj = None
+colors = ((0, 0, 255), (240, 0, 159), (255, 0, 0), (255, 255, 0))
+
+CALIBRATION_MATRIX = 0.23
 
 
 def midpoint(pt_a, pt_b):
 	return ((pt_a[0] + pt_b[0]) * 0.5, (pt_a[1] + pt_b[1]) * 0.5)
 
 
-# image = cv2.imread('./output_images/thresholded_print_samples.jpg')
-thresholded_image = threshold_red()
+thresholded_image = threshold_red('./input_images/print_samples.jpg')
+
 image = cv2.cvtColor(thresholded_image, cv2.COLOR_BGR2GRAY)
 
 
-#find contours in edge map (not necessary?)
+
+#find contours in edge map
 cnts = cv2.findContours(image.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 cnts = imutils.grab_contours(cnts)
 
-# sort the contours from left-to-right and initialize the bounding box
-# point colors
+
+
+#sort contours from left to right
 (cnts, _) = contours.sort_contours(cnts)
-colors = ((0, 0, 255), (240, 0, 159), (255, 0, 0), (255, 255, 0))
 
-ref_obj = None
-
+objects_coords = []
 # loop over the contours individually
 for c in cnts:
 	# if the contour is not sufficiently large, ignore it
@@ -73,8 +78,16 @@ for c in cnts:
 	cv2.drawContours(orig, [ref_obj[0].astype("int")], -1, (0, 255, 0), 2)
 	# stack the reference coordinates and the object coordinates
 	# to include the object center
+	#(5 x 2) matrix of corners of bounding box + centre co ordinate
 	ref_coords = np.vstack([ref_obj[0], ref_obj[1]])
+	ref_coords = CALIBRATION_MATRIX*ref_coords
+
+
 	obj_coords = np.vstack([box, (c_x, c_y)])
+
+	objects_coords.append(obj_coords)
+
+
 
 # loop over the original points
 	for ((x_a, y_a), (x_b, y_b), color) in zip(ref_coords, obj_coords, colors):
@@ -89,11 +102,71 @@ for c in cnts:
 		(m_x, m_y) = midpoint((x_a, y_a), (x_b, y_b))
 		cv2.putText(orig, "{:.1f}mm".format(D), (int(m_x), int(m_y - 10)),
 			cv2.FONT_HERSHEY_SIMPLEX, 0.55, color,5)
+
 		# show the output image
-		# cv2.imshow("Image", orig)
-		cv2.imwrite('./output_images/distance_between_test.jpg', orig)
+		# cv2.imwrite('./output_images/distance_between_test.jpg', orig)
 
 		# cv2.waitKey(0)
 		# plt.figure()
 		# plt.imshow(orig)
 		# plt.show()
+objects_coords_arr = np.array(objects_coords)
+objects_coords_arr = CALIBRATION_MATRIX*objects_coords_arr
+
+objects_coords_arr[:,:,0] = objects_coords_arr[:,:,0] - ref_coords[4,0]
+objects_coords_arr[:,:,1] = objects_coords_arr[:,:,1] - ref_coords[4,1]
+print(objects_coords_arr)
+### NORMALIZE TO MAKE REF OBJECT THE STARTING POINT ###
+ref_coords[:,0] = ref_coords[:,0] - ref_coords[4,0]
+ref_coords[:,1] = ref_coords[:,1] - ref_coords[4,1]
+print(ref_coords)
+
+ref_centre = ref_coords[4,:]
+obj_centre = objects_coords_arr[:,4,:]
+
+
+line_arr = np.vstack((ref_centre, obj_centre[0], obj_centre[1]))
+
+
+line_el_1 = line_arr[0]
+line_el_1_x = line_el_1[0]
+line_el_1_y = line_el_1[1]
+
+line_el_2 = line_arr[1]
+line_el_2_x = line_el_2[0]
+line_el_2_y = line_el_2[1]
+
+line_el_3 = line_arr[2]
+line_el_3_x = line_el_3[0]
+line_el_3_y = line_el_3[1]
+
+#NORMALIZE TO MAKE REF OBJ THE STARTING POINT
+line_el_1_x_norm = line_el_1_x - line_el_1_x
+line_el_1_y_norm = line_el_1_y - line_el_1_x
+
+line_el_2_x_norm = line_el_2_x - line_el_1_x
+line_el_2_y_norm = line_el_2_y - line_el_1_x
+
+line_el_3_x_norm = line_el_3_x - line_el_1_x
+line_el_3_y_norm = line_el_3_y - line_el_1_x
+
+x = [line_el_1_x, line_el_2_x, line_el_3_x]
+y = [line_el_1_y, line_el_2_y, line_el_3_y]
+
+#plot
+plt.figure(figsize=(10,4))
+plt.scatter(ref_coords[:,0], ref_coords[:,1])
+plt.plot(x,y, '--')
+plt.scatter(objects_coords_arr[:,:,0], objects_coords_arr[:,:,1], marker='v')
+
+for x,y in zip(x,y):
+	label = f"({x:.1f},{y:.1f})"
+	plt.annotate(label, (x,y), textcoords = "offset points", xytext = (0,10), ha = 'center')
+
+plt.xlim([-300, 600])
+plt.xlabel('mm')
+plt.ylabel('mm')
+ax=plt.gca()
+# ax.yaxis.set_tick_params(labelleft=False)
+# ax.set_yticks([])
+plt.show()
