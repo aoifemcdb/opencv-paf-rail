@@ -66,7 +66,7 @@ def visualise_process(img):
 
 
 
-img = load_image('../test_images/print_samples.jpg')
+img = load_image('../colour_shape_sensing/test_images/print_samples.jpg')
 visualise_process(img)
 
 

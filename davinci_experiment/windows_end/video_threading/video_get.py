@@ -1,14 +1,16 @@
 from threading import Thread
 import cv2
 
+
 class VideoGet:
     """
     Class that continuously gets frames from a VideoCapture object
     with a dedicated thread.
     """
 
-    def __init__(self, src=0):
-        self.stream = cv2.VideoCapture(src)
+    def __init__(self, camera_id):
+        self.stream = cv2.VideoCapture(camera_id, cv2.CAP_DSHOW)
+        # Initialize grabbed and frame
         (self.grabbed, self.frame) = self.stream.read()
         self.stopped = False
 

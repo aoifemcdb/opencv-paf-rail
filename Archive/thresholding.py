@@ -17,11 +17,19 @@ norm = colors.Normalize(vmin=-1.,vmax=1.)
 norm.autoscale(pixel_colors)
 pixel_colors = norm(pixel_colors).tolist()
 
+<<<<<<< Updated upstream:thresholding.py
 axis.scatter(r.flatten(), g.flatten(), b.flatten(), facecolors=pixel_colors, marker=".")
 axis.set_xlabel("Red")
 axis.set_ylabel("Green")
 axis.set_zlabel("Blue")
 plt.show()
+=======
+def load_hsv_image(filename):
+    img = cv2.imread(filename)
+    bgr_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    hsv_img = cv2.cvtColor(bgr_img, cv2.COLOR_RGB2HSV)
+    return img, hsv_img
+>>>>>>> Stashed changes:Archive/thresholding.py
 
 hsv_img = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
 plt.imshow(hsv_img)
@@ -36,6 +44,7 @@ axis.set_ylabel("Saturation")
 axis.set_zlabel("Value")
 plt.show()
 
+<<<<<<< Updated upstream:thresholding.py
 # R G B
 # colour_1 = (255, 255, 255) #white
 # colour_2 = (0, 255, 0) # green
@@ -53,6 +62,29 @@ plt.show()
 # plt.subplot(2, 2, 4)
 # plt.imshow(result_2)
 # plt.show()
+=======
+def threshold_red(image):
+    lower1 = (0, 100, 20)
+    upper1 = (10, 255, 255)
+    lower2 = (160, 100, 20)
+    upper2 = (179, 255, 255)
+    img, hsv_img = load_hsv_image(image)
+    # img, hsv_img = load_hsv_image('./test_images/print_samples.jpg')
+    red_mask, result = generate_mask(hsv_img, lower1, upper1, lower2, upper2)
+    # visualise_thresholding(img, hsv_img, red_mask, result)
+    return result
+
+def save_thresholded_image(image, savename: str):
+    result = threshold_red(image)
+    cv2.imwrite('./output_images/' + '{}'.format(savename), result)
+    print("Image saved")
+    return
+
+result = threshold_red('./input_images/IMG_4141.jpg')
+plt.imshow(result)
+plt.show()
+# save_thresholded_image('./input_images/print_samples_longer.jpg','thresholded_print_samples_longer.jpg')
+>>>>>>> Stashed changes:Archive/thresholding.py
 
 #########################################
 # # # HSV # # #
