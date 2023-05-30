@@ -154,7 +154,7 @@ def get_trajectory(image, CALIBRATION_MATRIX):
 	x,y  = get_line(ref_centre, obj_centre)
 	return x,y,ref_coords_calibrated, objects_coords_calibrated
 
-image = load_image_threshold('../colour_shape_sensing/input_images/print_samples_rotate.jpg')
+image = load_image_threshold('../Archive/print_samples_rotate.jpg')
 x,y, ref_coords_calibrated, objects_coords_calibrated = get_trajectory(image, CALIBRATION_MATRIX)
 
 def save_trajectory(x,y, filename: str):

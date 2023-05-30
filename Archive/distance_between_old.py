@@ -27,7 +27,7 @@ def load_image_threshold(filename):
 	# cv2.waitKey(0)
 	return image
 
-image = load_image_threshold('../colour_shape_sensing/input_images/print_samples_rotate.jpg')
+image = load_image_threshold('print_samples_rotate.jpg')
 
 
 #find contours in edge map

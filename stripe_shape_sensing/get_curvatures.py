@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-filename = '../output_trajectories/trajectory_2.csv'
+filename = '../colour_shape_sensing/output_trajectories/trajectory_2.csv'
 #load data as numpy array
 def get_trajectory(filename):
     data = pd.read_csv(filename).values
