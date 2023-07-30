@@ -1,0 +1,4 @@
+<launch>
+    <node name="keypress_publisher" pkg="ur3_trajectory" type="keypress_publisher.py" output="screen"/>
+</launch>
+

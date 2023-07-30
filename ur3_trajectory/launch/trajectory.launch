@@ -1,0 +1,17 @@
+<launch>
+  <!-- Load URDF description of the robot -->
+  <arg name="urdf_file" default="$(find ur3e_moveit_config)/urdf/ur3e.urdf"/>
+  <param name="robot_description" command="cat $(arg urdf_file)" />
+
+  <!-- Launch the robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <!-- Launch the MoveIt configuration -->
+  <include file="$(find ur3e_moveit_config)/launch/move_group.launch">
+    <arg name="load_robot_description" value="false" />
+  </include>
+
+  <!-- Load the trajectory node -->
+  <node name="trajectory_node" pkg="ur3_trajectory" type="trajectory_node.py" output="screen" />
+</launch>
+
