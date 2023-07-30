@@ -48,6 +48,5 @@ def calibrate_camera(images_path, checkerboard_size):
 
 
 
-
-
-
+# camera_matrix, dist_coeffs = calibrate_camera('./colour_shape_sensing/checkerboard_calibration_images/*.jpg', (5,7))
+# print(camera_matrix, dist_coeffs)

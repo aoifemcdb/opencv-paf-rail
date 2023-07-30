@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
-import numpy as np
 # # import rospy
 # from geometry_msgs.msg import PointStamped, PoseStamped
 # from nav_msgs.msg import Path
-from colour_shape_sensing.approximate_spline import *
+from Archive.approximate_spline import *
 
 def generate_trajectory(coords):
     # Generate a 2D trajectory from the input coordinates
