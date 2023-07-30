@@ -1,0 +1,11 @@
+<launch>
+  <!-- Start the trajectory_node.py with a slight delay -->
+  <node name="trajectory_node" pkg="ur3_trajectory" type="trajectory_node.py" output="screen">
+    <param name="use_gui" value="true"/>
+  </node>
+
+  <!-- Start the keypress_publisher.py with a slight delay -->
+  <node name="keypress_publisher" pkg="ur3_trajectory" type="keypress_publisher.py" output="screen" launch-prefix="sleep 5"/>
+</launch>
+
+
