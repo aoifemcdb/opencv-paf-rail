@@ -1,4 +1,5 @@
 import multiprocessing
+from colour_shape_sensing import apprixmate_spline_video
 import us_test
 import os
 os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "dummy"

@@ -112,8 +112,8 @@ def capture_process_webcam(webcam_frame_lock, webcam_video_writer):
     webcam_video_writer.release()
 
 if __name__ == '__main__':
-    ultrasound_output_file = "ultrasound_stream_test.mp4"
-    webcam_output_file = "webcam_stream_test.mp4"
+    ultrasound_output_file = "ultrasound_stream_robot.mp4"
+    webcam_output_file = "webcam_stream_robot.mp4"
     fps = 30
 
     ultrasound_frame_lock = threading.Lock()

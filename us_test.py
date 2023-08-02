@@ -22,7 +22,7 @@ def main():
     cv2.imshow('bk_frame', bk.img)
 
     # Create a VideoWriter object
-    output_file = "ultrasound_stream_test.mp4"
+    output_file = "ultrasound_stream_test_human6.mp4"
     frame_width, frame_height = bk.img.shape[1], bk.img.shape[0]
     fps = 30  # Adjust the frame rate as needed
     video_writer = cv2.VideoWriter(output_file, cv2.VideoWriter_fourcc(*"avc1"), fps, (frame_width, frame_height))
