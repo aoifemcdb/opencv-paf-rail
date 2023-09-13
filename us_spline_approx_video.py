@@ -12,19 +12,19 @@ frames_per_second = 25
 ip = '128.16.0.3'  # Default IP of BK5000
 port = 7915
 
-bk = BK5000(timeout=timeout, frames_per_second=frames_per_second)
-bk.connect_to_host(ip, port)
-bk.query_win_size()
-bk.start_streaming()
-
-# Get a single frame
-bk.get_frame()
-
-# Ultrasound video settings
-ultrasound_output_file = "ultrasound_video.mp4"
-ultrasound_frame_width, ultrasound_frame_height = bk.img.shape[1], bk.img.shape[0]
-ultrasound_fps = 30  # Adjust the frame rate as needed
-ultrasound_video_writer = cv2.VideoWriter(ultrasound_output_file, cv2.VideoWriter_fourcc(*"mp4v"), ultrasound_fps, (ultrasound_frame_width, ultrasound_frame_height))
+# # bk = BK5000(timeout=timeout, frames_per_second=frames_per_second)
+# # bk.connect_to_host(ip, port)
+# bk.query_win_size()
+# bk.start_streaming()
+#
+# # Get a single frame
+# bk.get_frame()
+#
+# # Ultrasound video settings
+# ultrasound_output_file = "ultrasound_video.mp4"
+# ultrasound_frame_width, ultrasound_frame_height = bk.img.shape[1], bk.img.shape[0]
+# ultrasound_fps = 30  # Adjust the frame rate as needed
+# ultrasound_video_writer = cv2.VideoWriter(ultrasound_output_file, cv2.VideoWriter_fourcc(*"mp4v"), ultrasound_fps, (ultrasound_frame_width, ultrasound_frame_height))
 
 # Webcam video settings
 webcam_output_file = "webcam_video.mp4"
@@ -159,11 +159,12 @@ def process_webcam():
     cv2.destroyAllWindows()
 
 
+#
+# # Start ultrasound capture thread
+# ultrasound_thread = threading.Thread(target=capture_ultrasound)
+# ultrasound_thread.daemon = True
+# ultrasound_thread.start()
 
-# Start ultrasound capture thread
-ultrasound_thread = threading.Thread(target=capture_ultrasound)
-ultrasound_thread.daemon = True
-ultrasound_thread.start()
 
 # Start webcam capture thread
 webcam_thread = threading.Thread(target=capture_webcam)
@@ -176,21 +177,21 @@ webcam_processing_thread.daemon = True
 webcam_processing_thread.start()
 
 # Create named windows for display
-cv2.namedWindow('Ultrasound Frame', cv2.WINDOW_NORMAL)
+# cv2.namedWindow('Ultrasound Frame', cv2.WINDOW_NORMAL)
 cv2.namedWindow('Webcam Frame', cv2.WINDOW_NORMAL)
 
-while True:
-    # Display ultrasound frame
-    with ultrasound_frame_lock:
-        cv2.imshow('Ultrasound Frame', ultrasound_frame)
-
-    # Exit the loop if the 'q' key is pressed
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# Release resources
-ultrasound_video_writer.release()
-webcam_video_writer.release()
-webcam.release()
-cv2.destroyAllWindows()
+# while True:
+#     # Display ultrasound frame
+#     with ultrasound_frame_lock:
+#         cv2.imshow('Ultrasound Frame', ultrasound_frame)
+#
+#     # Exit the loop if the 'q' key is pressed
+#     if cv2.waitKey(1) & 0xFF == ord('q'):
+#         break
+#
+# # Release resources
+# ultrasound_video_writer.release()
+# webcam_video_writer.release()
+# webcam.release()
+# cv2.destroyAllWindows()
 

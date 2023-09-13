@@ -1,21 +1,25 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib as mpl
+
+# Set the font family to match LaTeX font
+mpl.rcParams['font.family'] = 'serif'
 
 #colors:
 #yellow #F0D000
 #blue #235789
 #red #C1292E
 #black #020100
-plt.style.use('seaborn') # I personally prefer seaborn for the graph style, but you may choose whichever you want.
-params = {"ytick.color" : "black",
-          "xtick.color" : "black",
-          "axes.labelcolor" : "black",
-          "axes.edgecolor" : "black",
-          "text.usetex" : True,
-          "font.family" : "serif",
-          "font.serif" : ["Computer Modern Serif"]}
-plt.rcParams.update(params)
+# plt.style.use('seaborn') # I personally prefer seaborn for the graph style, but you may choose whichever you want.
+# params = {"ytick.color" : "black",
+#           "xtick.color" : "black",
+#           "axes.labelcolor" : "black",
+#           "axes.edgecolor" : "black",
+#           "text.usetex" : True,
+#           "font.family" : "serif",
+#           "font.serif" : ["Computer Modern Serif"]}
+# plt.rcParams.update(params)
 
 def plot_data_against_fbgs():
     # Load the CSV file into a pandas DataFrame
@@ -61,7 +65,7 @@ def plot_data_against_fbgs():
     plt.fill_between([], [], [], color='lightgray', alpha=0.5,
                      label='Deviation range \nof rail from geometric radius (mm)')
     plt.scatter(radius, fbgs_radius, marker='v', color='#F0D000', label='FBGS')
-    plt.scatter(radius, gt_measured_radius, color='#C1292E', label='Vision - Ground Truth')
+    # plt.scatter(radius, gt_measured_radius, color='#C1292E', label='Vision - Ground Truth')
     plt.scatter(radius, measured_radius, color='#235789', label='Vision - Colorbands on Staircase')
     plt.scatter(radius, rails_measured_radius, color='#020100', label='Vision - Rails on Staircase')
 
@@ -210,14 +214,14 @@ def plot_data_against_fbgs_corrected():
 
     # Add a single label for the deviation range
     plt.fill_between([], [], [], color='lightgray', alpha=0.5,
-                     label='Deviation range \nof rail from geometric radius (mm)')
-    # plt.scatter(radius, fbgs_radius, marker='v', color='#F0D000', label='FBGS')
-    plt.scatter(radius, gt_measured_radius, color='#C1292E', label='Vision - Ground Truth')
+                     label='Deviation range \n of rail from geometric radius (mm)')
+    plt.scatter(radius, fbgs_radius, marker='v', color='#F0D000', label='FBGS')
+    # plt.scatter(radius, gt_measured_radius, color='#C1292E', label='Vision - Ground Truth')
     # plt.scatter(radius, measured_radius, color='#235789', label='Vision - Colorbands on Staircase')
     plt.scatter(radius, rails_measured_radius, color='#020100', label='Vision - Rails on Staircase')
 
-    # plt.errorbar(radius, fbgs_radius, yerr = fbgs_std_dev, fmt = 'none', capsize=6, color='#F0D000')
-    plt.errorbar(radius, gt_measured_radius, yerr=gt_std_dev, fmt='none', capsize=6, color='#C1292E')
+    plt.errorbar(radius, fbgs_radius, yerr = fbgs_std_dev, fmt = 'none', capsize=6, color='#F0D000')
+    # plt.errorbar(radius, gt_measured_radius, yerr=gt_std_dev, fmt='none', capsize=6, color='#C1292E')
     # plt.errorbar(radius, measured_radius, yerr=std_dev, fmt='none', capsize=6, color='#235789')
     plt.errorbar(radius, rails_measured_radius, yerr=rails_std_dev, fmt='none', capsize=6, color='#020100')
 
@@ -230,19 +234,63 @@ def plot_data_against_fbgs_corrected():
     plt.ylabel('Radius (mm)')
     plt.xticks([10, 30, 50, 70, 90, 110, 130])
     plt.yticks([10, 30, 50, 70, 90, 110, 130])
-    plt.title('Rails Corrected for Systematic Error vs Ground Truth')
+    plt.title('Vision sensed PAF Rails vs Geometric Radius & FBGS')
     plt.legend(fontsize='small')
+    dpi=300
+    plt.savefig('./experiment_data_260623/rails/experiment_one_rails_gt_vs_FBGS_only.png', dpi=dpi, bbox_inches='tight', pad_inches=0)
     plt.show()
-    # dpi=300
-    # plt.savefig('./experiment_data_260623/rails/experiment_one_rails_corrected_gt.png', dpi=dpi)
     return
 
+def plot_warped_data():
+    # Replace 'your_data.csv' with the actual file path of your CSV data
+    file_path = './experiment_data_260723/all_radii_data_final.csv'
+
+    # Read the CSV data into a Pandas DataFrame
+    df = pd.read_csv(file_path)
+
+    # Assuming the first column is the radius, and the rest are mean and std dev for each set
+    radius_column = 'radius'
+    mean_columns = ['angle_0_mean', 'angle_10_mean', 'angle_20_mean', 'angle_30_mean']
+    std_dev_columns = ['angle_0_std_dev', 'angle_10_std_dev', 'angle_20_std_dev', 'angle_30_std_dev']
+    set_labels = ['Camera Angle: 0°', 'Camera Angle: 10°', 'Camera Angle: 20°', 'Camera Angle: 30°']
+    set_colors = ['#F0D000', '#235789', '#C1292E', '#020100']
+
+    # Create a scatter plot with error bars for each set of mean and std dev
+    for i in range(len(mean_columns)):
+        plt.errorbar(df[radius_column], df[mean_columns[i]], yerr=df[std_dev_columns[i]], label=set_labels[i],
+                     linestyle='None', marker='o', color=set_colors[i], capsize=6)
+
+    # Add custom text labels for each set in the plot
+    # for i in range(len(mean_columns)):
+    #     plt.text(0.95, 0.85 - i * 0.05, set_labels[i], ha='right', transform=plt.gca().transAxes)
+
+    # Create a separate box (like a legend) for the custom labels
+    # legend_box_text = '\n'.join(set_labels)
+    # plt.annotate(legend_box_text, xy=(0.08, 0.8), xycoords='axes fraction', fontsize=10,
+    #              bbox=dict(boxstyle='round', facecolor='white', edgecolor='black', alpha=0.7))
+    x = np.linspace(0, 150, 100)
+    plt.plot(x, x, color='gray', linestyle='--', label='Geometric radius')
+
+    # Set plot labels and titles
+    plt.xlabel('Radius (mm)')
+    plt.ylabel('Sensed Radius (mm)')
+    plt.title('Sensed Radius vs Ground Truth Radius \nfor Camera Angles ranging 0° to 30°')
+    plt.legend()
+    plt.xticks([10, 30, 50, 70, 90, 110, 130])
+    plt.yticks([10, 30, 50, 70, 90, 110])
+
+    # Show the plot
+    plt.grid(False)
+    # plt.show()
+    dpi=300
+    plt.savefig('./experiment_data_260623/rails/experiment_two_warped_data.pdf', dpi=dpi)
 
 
 
 # plot_errors()
-# plot_data_against_fbgs_corrected()
-plot_errors()
+plot_data_against_fbgs_corrected()
+# plot_errors()
+# plot_warped_data()
 # def main():
 # plot_data_against_data()
 #     return

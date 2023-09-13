@@ -4,12 +4,36 @@ import numpy as np
 from scipy.interpolate import UnivariateSpline
 from calibration import Calibration
 from colour_shape_sensing.color_boundaries import ColorBoundaries
+import matplotlib as mpl
+
+# Set the font family to match LaTeX font
+mpl.rcParams['font.family'] = 'serif'
+
+
+""" to get the full shape, not all x values have a unique mapping, 
+they go back on themselves particularly for tighter curves. need to add a
+statement for this. """
+
+def rotate_image(image, angle):
+    h, w = image.shape[:2]
+    center = (w // 2, h // 2)
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    rotated_image = cv2.warpAffine(image, M, (w, h))
+    return rotated_image
 
 class ShapeSensing:
     def __init__(self):
         self.calibration = Calibration()
 
+
     def process_image(self, image, lower_color, upper_color, kernel_size=5, plot_images=False):
+        # image = rotate_image(image, -90)
+        # rot_h, rot_w = image.shape[:2]
+        # rot_corners = np.array([[0, 0], [rot_w, 0], [rot_w, rot_h], [0, rot_h]], dtype=np.float32)
+        # M = cv2.getRotationMatrix2D((rot_w / 2, rot_h / 2), 90, 1.0)
+        # rotated_corners = cv2.transform(np.array([rot_corners]), M)[0]
+
+
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         if plot_images:
             plt.figure()
@@ -32,9 +56,7 @@ class ShapeSensing:
             plt.show()
 
         contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[0]
-        print(contours)
-
-
+        # print(contours)
 
         max_contour = max(contours, key=cv2.contourArea)
 
@@ -54,18 +76,40 @@ class ShapeSensing:
         y_new = np.interp(x_new, x_vals, y_values)
         spline_new = UnivariateSpline(x_new, y_new, k=3, s=smoothing_factor)
         y_new_smooth = spline_new(x_new)
-        if np.any(np.diff(y_new_smooth) < -500):
-            print('Discontinuous curve detected, applying fix...')
-            y_new_smooth_fixed = []
-            for i in range(len(x_new)):
-                if i == 0:
-                    y_new_smooth_fixed.append(y_new_smooth[i])
-                elif y_new_smooth[i] - y_new_smooth[i - 1] < -500:
-                    y_new_smooth_fixed.append(y_new_smooth_fixed[i - 1])
-                else:
-                    y_new_smooth_fixed.append(y_new_smooth[i])
-            y_new_smooth = np.array(y_new_smooth_fixed)
-        # y_new_smooth = np.max(y_values) - y_new_smooth
+        # if np.any(np.diff(y_new_smooth) < -500):
+        #     print('Discontinuous curve detected, applying fix...')
+        #     y_new_smooth_fixed = []
+        #     for i in range(len(x_new)):
+        #         if i == 0:
+        #             y_new_smooth_fixed.append(y_new_smooth[i])
+        #         elif y_new_smooth[i] - y_new_smooth[i - 1] < -500:
+        #             y_new_smooth_fixed.append(y_new_smooth_fixed[i - 1])
+        #         else:
+        #             y_new_smooth_fixed.append(y_new_smooth[i])
+        #     y_new_smooth = np.array(y_new_smooth_fixed)
+
+        image_copy_line = image.copy()
+        if plot_images:
+            # fig1=plt.figure()
+            plt.imshow(image_copy_line, origin='upper')
+            x_new = x_new[1000:9500]
+            y_new_smooth = y_new_smooth[1000:9500]
+            plt.plot(x_new, y_new_smooth, color = 'y', label='Sensed Shape')
+            # plt.xlabel('x (mm)')
+            # plt.ylabel('y (mm)')
+            # plt.xlim(rotated_corners[:, 0].min(), rotated_corners[:, 0].max())
+            # plt.ylim(rotated_corners[:, 1].min(), rotated_corners[:, 1].max())
+            plt.axis('off')
+
+            plt.legend()
+
+            # dpi=300
+            # plt.savefig('phantom_with_sensed_rail.png', dpi=dpi)
+            # fig1_width, fig1_height = fig1.get_size_inches()
+            # print(fig1_width, fig1_height)
+            plt.show()
+
+
         return image, mask, x_new, y_new_smooth
 
     def downsample_spline_curve(self, x_new, y_new_smooth, num_points, plot_curve=False):
@@ -80,7 +124,7 @@ class ShapeSensing:
         spline_curve_downsampled = (spline_curve[::stride])
 
         max_y = np.max(spline_curve_downsampled[:, 1])
-        y_flipped = max_y - spline_curve_downsampled[:, 1]  # Flip the y-coordinates
+        y_flipped = max_y - spline_curve_downsampled[:, 1] + max_y  # Flip the y-coordinates
         spline_curve_flipped = np.column_stack((spline_curve_downsampled[:, 0], y_flipped))
 
         if plot_curve:
@@ -92,7 +136,7 @@ class ShapeSensing:
             plt.legend()
             plt.show()
 
-        return spline_curve_downsampled
+        return spline_curve_flipped
 
 
     def transform_points(self, points):
