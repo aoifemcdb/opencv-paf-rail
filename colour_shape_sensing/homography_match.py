@@ -4,8 +4,8 @@ import numpy as np
 from feature_detection import detect_and_compute_features
 
 # Load the images
-image1 = cv2.imread('./experiment_images_260723/110mm/train/WIN_20230726_10_56_31_Pro.jpg')
-image2 = cv2.imread('./experiment_images_260723/110mm/test/angle_20/WIN_20230726_10_58_37_Pro.jpg')
+image1 = cv2.imread('./experiment_images_260723/30mm/train/WIN_20230726_11_30_17_Pro.jpg')
+image2 = cv2.imread('./experiment_images_260723/30mm/test/angle_20/WIN_20230726_11_32_02_Pro.jpg')
 
 if image1 is None:
     print("Image1 not loaded.")
@@ -37,15 +37,15 @@ fig_kw, plots_kw = plt.subplots(len(feature_detection_methods), 2, figsize=(12, 
 # Create a figure for feature matching visualization with subplots
 fig_matching, plots_matching = plt.subplots(len(feature_detection_methods), figsize=(12, 6*len(feature_detection_methods)))
 
-# Detect ArUco markers in the images
-aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)
-parameters = cv2.aruco.DetectorParameters_create()
-corners1, ids1, rejected1 = cv2.aruco.detectMarkers(image1, aruco_dict, parameters=parameters)
-corners2, ids2, rejected2 = cv2.aruco.detectMarkers(image2, aruco_dict, parameters=parameters)
-
-# Extract corner points of the detected markers as keypoints
-aruco_keypoints1 = [cv2.KeyPoint(c[0][0], c[0][1], 10) for c in corners1]
-aruco_keypoints2 = [cv2.KeyPoint(c[0][0], c[0][1], 10) for c in corners2]
+# # Detect ArUco markers in the images
+# aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)
+# parameters = cv2.aruco.DetectorParameters_create()
+# corners1, ids1, rejected1 = cv2.aruco.detectMarkers(image1, aruco_dict, parameters=parameters)
+# corners2, ids2, rejected2 = cv2.aruco.detectMarkers(image2, aruco_dict, parameters=parameters)
+#
+# # Extract corner points of the detected markers as keypoints
+# aruco_keypoints1 = [cv2.KeyPoint(c[0][0], c[0][1], 10) for c in corners1]
+# aruco_keypoints2 = [cv2.KeyPoint(c[0][0], c[0][1], 10) for c in corners2]
 
 # Loop through each method and visualize keypoints, feature matching, and warped images
 for i, method in enumerate(feature_detection_methods):
@@ -54,8 +54,8 @@ for i, method in enumerate(feature_detection_methods):
     keypoints_method2, descriptors2 = detect_and_compute_features(image2, method, num_features, color_weighting_mask=binary_mask2)
 
     # Combine keypoints from feature detection methods and ArUco markers
-    keypoints1 = keypoints_method1 + aruco_keypoints1
-    keypoints2 = keypoints_method2 + aruco_keypoints2
+    keypoints1 = keypoints_method1
+    keypoints2 = keypoints_method2
 
     # Draw keypoints with size
     keypoints_with_size1 = np.copy(image1)
@@ -80,7 +80,7 @@ for i, method in enumerate(feature_detection_methods):
     matches = sorted(matches, key=lambda x: x.distance)
 
     # Take only the top matches (adjust this threshold if needed)
-    num_top_matches = 10  # Try using a lower value here, like 50 or 30
+    num_top_matches = 4   # Try using a lower value here, like 50 or 30
     good_matches = matches[:num_top_matches]
 
     # Draw feature matching lines on the images in the feature matching visualization figure
