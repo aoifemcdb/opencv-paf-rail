@@ -5,21 +5,8 @@ import matplotlib as mpl
 
 # Set the font family to match LaTeX font
 mpl.rcParams['font.family'] = 'serif'
+mpl.rcParams['font.size'] = 12
 
-#colors:
-#yellow #F0D000
-#blue #235789
-#red #C1292E
-#black #020100
-# plt.style.use('seaborn') # I personally prefer seaborn for the graph style, but you may choose whichever you want.
-# params = {"ytick.color" : "black",
-#           "xtick.color" : "black",
-#           "axes.labelcolor" : "black",
-#           "axes.edgecolor" : "black",
-#           "text.usetex" : True,
-#           "font.family" : "serif",
-#           "font.serif" : ["Computer Modern Serif"]}
-# plt.rcParams.update(params)
 
 def plot_data_against_fbgs():
     # Load the CSV file into a pandas DataFrame

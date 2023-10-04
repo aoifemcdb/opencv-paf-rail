@@ -20,8 +20,8 @@ from colour_shape_sensing.shape_sensing import ShapeSensing
 def main():
     calibration_images_path = './experiment_images_260723/calibration/*.jpg'
     # patch_file = './experiment_images_210623/patch/patch_1.jpg'
-    folder_path = './experiment_images_260623/kidney_phantom/rails_plotting'
-    output_file = 'null.csv'
+    folder_path = './pilot_results/warped_image'
+    output_file = 'warped_image.csv'
 
     calibration = Calibration()
     real_width = 24.5  # mm
