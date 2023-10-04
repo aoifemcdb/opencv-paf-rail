@@ -149,7 +149,10 @@ def visualize_best_matches(image1, kp1, des1, image2, kp2, des2, best_flann_para
     return good_matches
 
 
-def warp_and_visualize(image1, kp1, image2, kp2, good_matches, num_matches):
+def warp_and_visualize(image1_path, kp1, image2_path, kp2, good_matches, num_matches):
+    image1 = cv2.imread(image1_path)
+    image2 = cv2.imread(image2_path)
+
     if len(good_matches) < num_matches:
         print(f"Not enough good matches to use {num_matches} matches.")
         return
@@ -184,11 +187,19 @@ def warp_and_visualize(image1, kp1, image2, kp2, good_matches, num_matches):
         if not os.path.exists('pilot_results'):
             os.mkdir('pilot_results')
 
-        cv2.imwrite(os.path.join('pilot_results', 'original_image.jpg'), image2)
-        cv2.imwrite(os.path.join('pilot_results', 'warped_image.jpg'), warped_image)
+    # Save the images in 'results' folder inside the common subdirectory
+    common_path = os.path.commonprefix([image1_path, image2_path])
+    common_directory = os.path.dirname(common_path)
+
+    results_path = os.path.join(common_directory, 'results')
+    if not os.path.exists(results_path):
+        os.mkdir(results_path)
+
+    cv2.imwrite(os.path.join(results_path, 'original_image.jpg'), image2)
+    cv2.imwrite(os.path.join(results_path, 'warped_image.jpg'), warped_image)
 
 
-def main(image1, image2):
+def main(image1, image1_path, image2, image2_path):
     results = []
     results.extend(test_kdtree(image1, image2))
     results.extend(test_lsh(image1, image2))
@@ -209,7 +220,7 @@ def main(image1, image2):
 
 
     good_matches =  visualize_best_matches(image1, kp1, des1, image2, kp2, des2, best_flann_params)
-    warp_and_visualize(image1, kp1, image2, kp2, good_matches, 10)
+    warp_and_visualize(image1_path, kp1, image2_path, kp2, good_matches, len(good_matches))
     plt.show()
     return results
 
@@ -227,12 +238,13 @@ def find_min_distance_params(results):
 
 
 if __name__ == "__main__":
-    image1 = cv2.imread('./experiment_images_180923/pilot_test/train_frame.jpg')
-    image2 = cv2.imread('./experiment_images_180923/pilot_test/test_frame.jpg')
-    results = main(image1, image2)
+    image1_path = './experiment_images_180923/blue/90mm/train/WIN_20230918_11_41_17_Pro.jpg'
+    image2_path = './experiment_images_180923/blue/90mm/test/WIN_20230918_11_48_27_Pro.jpg'
+    image1 = cv2.imread(image1_path)
+    image2 = cv2.imread(image2_path)
+    results = main(image1, image1_path, image2, image2_path)
     best_params, min_distance = find_min_distance_params(results)
     plt.show()
-
 
     print(f"The minimum mean_distance is {min_distance} with parameters {best_params}")
 
