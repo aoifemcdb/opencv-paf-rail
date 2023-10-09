@@ -238,8 +238,8 @@ def find_min_distance_params(results):
 
 
 if __name__ == "__main__":
-    image1_path = './experiment_images_180923/blue/90mm/train/WIN_20230918_11_41_17_Pro.jpg'
-    image2_path = './experiment_images_180923/blue/90mm/test/WIN_20230918_11_48_27_Pro.jpg'
+    image1_path = './experiment_images_180923/blue/110mm/train/WIN_20230918_11_40_57_Pro.jpg'
+    image2_path = './experiment_images_180923/blue/110mm/test/WIN_20230918_11_48_12_Pro.jpg'
     image1 = cv2.imread(image1_path)
     image2 = cv2.imread(image2_path)
     results = main(image1, image1_path, image2, image2_path)

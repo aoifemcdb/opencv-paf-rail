@@ -342,11 +342,11 @@ class ShapeSensing:
 
 
 
-# Example usage (plot_images=True will plot all the images of the intermediary steps):
+# # Example usage (plot_images=True will plot all the images of the intermediary steps):
 # shape_sensing = ShapeSensing()
-# image = cv2.imread('image.jpg')
-# lower_color = (0, 0, 0)
-# upper_color = (255, 255, 255)
+# image = cv2.imread('./experiment_images_180923/pilot_test/results/original_image.jpg')
+# lower_color = (35, 50, 50)
+# upper_color = (90, 255, 255)
 # result = shape_sensing.process_image(image, lower_color, upper_color, plot_images=True)
 # curve_downsampled = shape_sensing.downsample_spline_curve(result[2], result[3], 100)
 
