@@ -20,8 +20,8 @@ from colour_shape_sensing.shape_sensing import ShapeSensing
 def main():
     calibration_images_path = './experiment_images_260723/calibration/*.jpg'
     # patch_file = './experiment_images_210623/patch/patch_1.jpg'
-    folder_path = './experiment_images_180923/red_green/110mm/results'
-    output_file = 'experiment_images_180923/red_green/110mm/results/red_green_110mm.csv'
+    folder_path = './experiment_images_180923/LoFTR/green/110mm'
+    output_file = 'experiment_images_180923/LoFTR/green/110mm/green_110mm.csv'
 
     calibration = Calibration()
     real_width = 24.5  # mm
@@ -42,8 +42,6 @@ def main():
                 color_boundaries = ColorBoundaries()
                 lower_color, upper_color = color_boundaries.get_color_boundaries(color)
                 undistorted_image = cv2.undistort(image, camera_matrix, dist_coeffs)
-                # warped_image = shape_sensing.apply_perspective_transform(undistorted_image, lower_color, upper_color, plot_images=True)
-                # patch_calibrated = calibration.calibrate_image(undistorted_image, pixels_per_mm_x, pixels_per_mm_y)
                 result = shape_sensing.process_image(undistorted_image, lower_color, upper_color, plot_images=True)
                 curve_downsampled = shape_sensing.downsample_spline_curve(result[2], result[3], 100, plot_curve=True)
 
